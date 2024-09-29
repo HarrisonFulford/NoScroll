@@ -12,8 +12,7 @@
     "tabs",
     "declarativeNetRequest",
     "activeTab",
-    "scripting",
-    "http://localhost:3001/*"  
+    "scripting"  
   ],
   "host_permissions": [  
     "*://*.instagram.com/*",
@@ -22,7 +21,8 @@
     "*://*.tiktok.com/*",
     "*://*.snapchat.com/*",
     "http://*/*",
-    "https://*/*"
+    "https://*/*",
+    "http://localhost:3001/*"
   ],
   "background": {
     "service_worker": "background.js"
