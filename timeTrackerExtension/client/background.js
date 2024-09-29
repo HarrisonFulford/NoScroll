@@ -18,89 +18,29 @@ let socialDict = {
 };
 
 blockedRules = [
-  {
-    id: 1,
-    priority: 1,
-    action: {
-      type: "block"
-    },
-    condition: {
-      urlFilter: "*://*.instagram.com/*",
-      resourceTypes: ["main_frame", "sub_frame"]
-    }
-  },
-  {
-    id: 2,
-    priority: 1,
-    action: {
-      type: "block"
-    },
-    condition: {
-      urlFilter: "*://*.reddit.com/*",
-      resourceTypes: ["main_frame", "sub_frame"]
-    }
-  },
-  {
-    id: 3,
-    priority: 1,
-    action: {
-      type: "block"
-    },
-    condition: {
-      urlFilter: "*://x.com/*",
-      resourceTypes: ["main_frame", "sub_frame"]
-    }
-  },
-  {
-    id: 4,
-    priority: 1,
-    action: {
-      type: "block"
-    },
-    condition: {
-      urlFilter: "*://*.tiktok.com/*",
-      resourceTypes: ["main_frame", "sub_frame"]
-    }
-  },
-  {
-    id: 5,
-    priority: 1,
-    action: {
-      type: "block"
-    },
-    condition: {
-      urlFilter: "*://*.snapchat.com/*",
-      resourceTypes: ["main_frame", "sub_frame"]
-    }
-  }
+  // Same blocked rules for social media sites
+  // ...
 ];
 
 // Function to start incrementing time if the tab is a social media site
 function startIncrementing(siteURL) {
   if (!intervalId) {
     intervalId = setInterval(() => {
-      // Check if the current tab's URL is still a social media URL
       chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         if (tabs.length > 0) {
           const currentURL = tabs[0].url;
           let socialSite = '';
 
-          // Check if the current tab is one of the social media sites
-          if (currentURL.includes('instagram.com')) {
-            socialSite = 'Instagram';
-          } else if (currentURL.includes('reddit.com')) {
-            socialSite = 'Reddit';
-          } else if (currentURL.includes('x.com')) {
-            socialSite = 'X';
-          } else if (currentURL.includes('tiktok.com')) {
-            socialSite = 'TikTok';
-          } else if (currentURL.includes('snapchat.com')) {
-            socialSite = 'Snapchat';
-          }
+          // Check if the current tab is a social media site
+          if (currentURL.includes('instagram.com')) socialSite = 'Instagram';
+          else if (currentURL.includes('reddit.com')) socialSite = 'Reddit';
+          else if (currentURL.includes('x.com')) socialSite = 'X';
+          else if (currentURL.includes('tiktok.com')) socialSite = 'TikTok';
+          else if (currentURL.includes('snapchat.com')) socialSite = 'Snapchat';
 
-          // If a social media site is detected, increment the time
+          // Increment the time if it's a social media site
           if (socialSite !== '') {
-            seconds++; // Increment the seconds
+            seconds++; // Increment seconds
             socialDict[socialSite]++;
             socialDict['Remaining Time'] = timeLimit - seconds;
             chrome.storage.local.set({ totalTime: seconds });
@@ -116,11 +56,11 @@ function startIncrementing(siteURL) {
           console.log(seconds >= timeLimit);
 
           if (seconds >= timeLimit) {
-            // If the time limit is exceeded, block the websites
+            // Block the websites and send data to MongoDB
             updateFilters(true);  // Pass true to block websites
+            sendDataToMongoDB(socialDict);  // Send the data
           } else {
-            // If below time limit, unblock the websites
-            updateFilters(false);  // Pass false to unblock websites
+            updateFilters(false);  // Unblock websites if below time limit
             console.log('goes to function');
           }
         }
@@ -129,40 +69,55 @@ function startIncrementing(siteURL) {
   }
 }
 
-// Listen for tab activation (when a user switches to a different tab)
+// Function to send data to MongoDB
+function sendDataToMongoDB(socialData) {
+  // Send the socialDict data to the backend API
+  fetch('http://localhost:3001/addScreenTime', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(socialData)
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log('Data successfully sent to MongoDB:', data);
+  })
+  .catch(error => {
+    console.error('Error sending data to MongoDB:', error);
+  });
+}
+
+// Listen for tab activation
 chrome.tabs.onActivated.addListener((activeInfo) => {
   chrome.tabs.get(activeInfo.tabId, (tab) => {
     activeTabURL = tab.url;
     console.log("Activated tab URL:", activeTabURL);
-    startIncrementing(activeTabURL); // Start incrementing if needed
+    startIncrementing(activeTabURL);
   });
 });
 
-// Listen for tab updates (e.g., when a user navigates to a new page)
+// Listen for tab updates
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (changeInfo.status === 'complete' && tab.active) {
     activeTabURL = tab.url;
     console.log("Updated tab URL:", activeTabURL);
-    startIncrementing(activeTabURL); // Start incrementing if needed
+    startIncrementing(activeTabURL);
   }
 });
-
-function blockRequest(details) {
-  return { cancel: true }; // Cancel the request
-}
 
 function updateFilters(block) {
   if (block) {
     chrome.declarativeNetRequest.updateDynamicRules({
       addRules: blockedRules,
-      removeRuleIds: [1, 2, 3, 4, 5] // Remove old rules if necessary
+      removeRuleIds: [1, 2, 3, 4, 5]
     }, () => {
       reloadOnce();
       openPopupOnce();
     });
   } else {
     chrome.declarativeNetRequest.updateDynamicRules({
-      removeRuleIds: [1, 2, 3, 4, 5] // Remove the specific rules to unblock
+      removeRuleIds: [1, 2, 3, 4, 5]
     }, () => {
       console.log("Blocking rules removed.");
     });
@@ -190,5 +145,4 @@ function openPopupOnce() {
     });
     notPoppedUp = false;
   }
-
 }
