@@ -1,0 +1,43 @@
+body { 
+    font-family: Arial, sans-serif; 
+    margin: 0; 
+    padding: 20px; 
+    background-color: #ccff99; /* Light green background */ 
+}
+
+.popup-container { 
+    text-align: center; 
+    border: 10px solid black;
+}
+
+h1 { 
+    font-size: 20px; 
+    color: #333; 
+    margin-bottom: 20px; 
+}
+
+p { 
+    font-size: 16px; 
+    color: #333; 
+}
+
+ul { 
+    text-align: center; 
+    list-style-type: none; 
+    padding: 0; 
+}
+
+li { 
+    font-size: 16px; 
+    color: #333; 
+}
+
+strong { 
+    font-size: 18px; 
+}
+
+.popup-container p:last-child { 
+    font-size: 14px; 
+    margin-top: 20px; 
+    color: #666; 
+}
