@@ -3,52 +3,175 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NoScroll</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>NoScroll - Time Distribution</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* CSS styles here */
+        /* Make the entire body take full height of the viewport */
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #B7F98F;
+            color: #333;
+            overflow-x: hidden; /* Prevent horizontal scrolling */
+        }
+
+        /* Apply box-sizing to include padding and border in element's total width */
+        *, *::before, *::after {
+            box-sizing: border-box; 
+        }
+
+        /* Use flexbox on the body to ensure the footer stays at the bottom */
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Main content will grow to fill the remaining space */
+        .content {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* Two columns */
+            grid-template-rows: auto 1fr auto; /* Header, content, footer */
+            gap: 20px; /* Gap between columns */
+            padding: 20px;
+            width: 100%;
+            max-width: 100vw; /* Limit width to viewport width */
+        }
+
+        header {
+            background-color: #333;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            grid-column: 1 / span 2; /* Make the header span both columns */
+        }
+
+        footer {
+            background-color: #333;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            grid-column: 1 / span 2; /* Make the footer span both columns */
+        }
+
+        .left-container {
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            grid-row: 2 / span 1; /* Occupies the full middle area */
+            grid-column: 1 / 2; /* Left column */
+        }
+
+        .right-container {
+            display: grid;
+            grid-template-rows: 2fr 1fr; /* Adjust row heights */
+            gap: 20px; /* Gap between the containers */
+            grid-column: 2 / 3; /* Right column */
+            grid-row: 2 / span 1; /* Full middle area */
+        }
+
+        .right-container .container {
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        /* Specific heights for top and bottom containers */
+        .right-container .container:nth-child(1) {
+            height: 500px; /* Set a specific height for the top container */
+        }
+
+        .right-container .container:nth-child(2) {
+            height: 200px; /* Set a smaller height for the bottom container */
+        }
+
+        .comingSoonContainer {
+            padding: 10px;
+            background-color: rgba(161, 161, 161, 0.853);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            text-align: center;
+            height: 100px;
+        }
+
+        .stat {
+            font-size: 1.5em;
+            margin: 10px 0;
+        }
+
+        .highlight {
+            font-weight: bold;
+            color: #007bff;
+        }
+
+
+    </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Header -->
-        <header class="header">
-            <div class="logo">
-                <img src="clock-icon.png" alt="Clock Icon" class="logo-icon">
-                <h1>NoScroll</h1>
-            </div>
-        </header>
 
-        <!-- Main Content -->
-        <div class="content">
-            <!-- Time Distribution Section -->
-            <div class="time-distribution">
-                <h2>Time Distribution</h2>
-                <div class="pie-chart">
-                    <!-- Insert your pie chart here -->
-                    <img src="pie-chart-placeholder.png" alt="Pie Chart">
-                </div>
-                <p>You spent the most time on &lt;insert social media&gt;</p>
+    <header>
+        <h1>NoScroll</h1>
+    </header>
+
+    <div class="content">
+        <!-- Left Container (Full height) -->
+        <div class="left-container">
+            <h2>Time Distribution</h2>
+            <div class="container">
+                <canvas id="myPieChart"></canvas>
+            </div>
+            <p class="stat">You spent the most time on <span class="highlight"><insert social media></span></p>
+            <p class="stat">You spent <span class="highlight"><insert time limit></span> hours on social media today</p>
+        </div>
+
+        <!-- Right containers stacked vertically -->
+        <div class="right-container">
+            <div class="container">
+                <h2>That time is equivalent to:</h2>
+                <br>
+                <p class="stat">
+                    <span class="highlight"><insert percentage></span>% of your waking hours
+                </p>
+                <br>
+                <p class="stat">
+                    <span class="highlight"><insert percentage></span> years of your life if you do it every day
+                </p>
+                <br>
+                <p class="stat">
+                    $<span class="highlight"><insert lifetime earnings></span> over your lifetime if you earn $20/hour
+                </p>
+                <br>
+                <br>
+                <br>
+                <br>
+                <p class="stat">
+                    It is estimated that <span class="highlight">33.9 million</span> Americans are addicted to social media
+                </p>
             </div>
 
-            <!-- Social Media Usage Info Section -->
-            <div class="usage-info">
-                <p>You spent &lt;time limit&gt; hours on social media today</p>
-                <p>That time is equivalent to:</p>
-                <ul>
-                    <li>&lt;(time limit in hours // 15) * 100&gt;% of your waking hours</li>
-                    <li>&lt;percentage&gt;*80 years of your life if you do it every day</li>
-                    <li>If you earn $20/hour, that time will be worth &lt;hours per day * 20 * 365 * 50&gt; over your lifetime</li>
-                </ul>
-            </div>
-
-            <!-- Message Aggregator Section -->
-            <div class="message-aggregator">
-                <h2>Message Aggregator</h2>
-                <p>Social media isn't all bad though. Instead of logging onto a platform and getting distracted, use our site to message your friends across different platforms.</p>
-                <div class="message-box">
-                    <!-- Placeholder for message aggregator functionality -->
-                    Message Aggregator
+            <div class="container">
+                <p>Social media isn't all bad though. Instead of logging onto a platform and getting distracted, use our site to keep in touch with your friends across different platforms.</p>
+                <div class="comingSoonContainer">
+                    <p>Message Aggregator</p>
                 </div>
             </div>
         </div>
     </div>
+
+    <footer>
+        <p>Be Productive.</p>
+        <p>Brought to you by MC Productions.</p>
+    </footer>
+
+    <script src="script.js"></script>
+
 </body>
 </html>
+
