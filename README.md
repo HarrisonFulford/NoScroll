@@ -1,2 +1,4 @@
 # Hack_GT_NoScroll
-A web-app / chrome extension that allows users to block distracting websites under customizable time constraints. The web-app provides a messaging service using twitter's API to let users message others without the distractions of social media.
+A chrome extension tracks time spent on social media and blocks them after their usage time reaches a set time limit.
+Users are then directed to another website where they can view more stats around their social media usage.
+The site prompts users to be more mindful of the time they are committing towards social media.
