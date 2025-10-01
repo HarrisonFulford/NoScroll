@@ -1,4 +1,4 @@
-# Hack_GT_NoScroll
+# NoScroll
 
 > **We built reels and twitter blockers before it was popular**
 
